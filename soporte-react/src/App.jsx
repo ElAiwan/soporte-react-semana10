@@ -30,6 +30,12 @@ function App() {
     setMensaje('Solicitud agregada correctamente.')
   }
 
+  function resolver(id) {
+    setSolicitudes(actuales => actuales.map(s =>
+      s.id === id ? { ...s, estado: 'Resuelta' } : s
+    ))
+  }
+
   const visibles = solicitudes.filter(s =>
     filtro === 'Todas' || s.estado === filtro
   )
@@ -59,7 +65,9 @@ function App() {
         <option>Resuelta</option>
       </select>
       {visibles.length === 0 ? <p>No hay resultados.</p> :
-        visibles.map(s => <SolicitudCard key={s.id} {...s} />)}
+        visibles.map(s =>
+          <SolicitudCard key={s.id} {...s} onResolver={resolver} />
+        )}
     </main>
   )
 }
