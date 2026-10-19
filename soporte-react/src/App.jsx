@@ -1,29 +1,19 @@
-const asignatura = 'Servicios Web'
-const categorias = ['Hardware', 'Software', 'Redes']
+import SolicitudCard from './components/SolicitudCard'
 
 function App() {
-  function mostrarCategorias() {
-    alert(`Categorías disponibles: ${categorias.join(', ')}`)
-  }
-
   return (
     <main>
-      <h1>Sistema de Soporte Técnico</h1>
-      <h2>Mi primera aplicación con React</h2>
-      <p>Asignatura: {asignatura}</p>
-      <p>Bienvenido al sistema de solicitudes.</p>
-      <h3>Categorías de soporte</h3>
-      <ul>
-        {categorias.map(categoria => (
-          <li key={categoria}>{categoria}</li>
-        ))}
-      </ul>
-      <button onClick={() => alert('Bienvenido a React')}>
-        Comenzar
-      </button>
-      <button onClick={mostrarCategorias}>
-        Ver categorías
-      </button>
+      <h1>Solicitudes de soporte</h1>
+      <SolicitudCard
+        titulo="Equipo no enciende"
+        prioridad="Alta"
+        estado="Pendiente"
+      />
+      <SolicitudCard
+        titulo="Instalar software"
+        prioridad="Media"
+        estado="En proceso"
+      />
     </main>
   )
 }
