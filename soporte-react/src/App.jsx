@@ -39,11 +39,13 @@ function App() {
   const visibles = solicitudes.filter(s =>
     filtro === 'Todas' || s.estado === filtro
   )
+  const pendientes = solicitudes.filter(s => s.estado === 'Pendiente').length
 
   return (
     <main>
       <h1>Gestión de solicitudes</h1>
       <p>Total registradas: {solicitudes.length}</p>
+      <p>Pendientes: {pendientes}</p>
       <form onSubmit={agregar}>
         <label htmlFor="titulo">Descripción</label>
         <input id="titulo" value={titulo}
