@@ -30,15 +30,17 @@ En resumen: las props fluyen de padre a hijo y son de solo lectura, mientras que
 - **CORS:** el servidor **sí responde**, pero el navegador bloquea la respuesta. La consola muestra *"blocked by CORS policy"* y la petición en Network no tiene el encabezado `Access-Control-Allow-Origin`. Desde Postman funciona, porque Postman no aplica CORS. Se corrige en `@CrossOrigin` o en la configuración de CORS, poniendo el origen exacto (por ejemplo, si Vite pasa a usar el 5174).
 - **404:** el servidor responde con **código 404**. La conexión funciona, pero la ruta o el método no existen. Axios entrega `err.response.status === 404`. Hay que revisar `@RequestMapping`, `@GetMapping` y la `baseURL`.
 - **Servidor caído:** **no hay respuesta**. Network muestra `net::ERR_CONNECTION_REFUSED` y Axios entrega un error sin `err.response` (`code: 'ERR_NETWORK'`). Lo comprobé al detener Spring Boot: la app mostró "No fue posible consultar las solicitudes." y no una pantalla en blanco.
+- **Caso real que encontré:** con `@CrossOrigin` en el controlador, un 404 llegaba a Axios como `ERR_NETWORK`, igual que una caída del servidor. Pasaba porque la respuesta de error de Spring (`/error`) no llevaba el encabezado CORS y el navegador la bloqueaba. Al pasar a una configuración CORS global (`CorsConfig`), el 404 llega con su código y la app muestra el mensaje correcto. Conclusión: si un error parece "de red" pero Postman sí responde, hay que revisar CORS.
 
 ## 5. ¿Qué mejoraría antes de publicar el sistema para usuarios reales?
 
-- **Persistencia real:** una base de datos con JPA, y POST, PUT y DELETE en el backend, para que lo que se registra o resuelve no se pierda al recargar.
-- **Configuración por entorno:** mover la URL de la API a una variable `VITE_API_URL` y el origen de CORS a `application.properties`, en lugar de dejarlos fijos en el código.
-- **Validación en el servidor:** usar `@Valid` y devolver errores claros (400) con un mensaje que el frontend pueda mostrar.
-- **Mensajes de error más específicos:** distinguir entre servidor caído, 404 y 500, y ofrecer un botón "Reintentar".
+Algunas mejoras ya quedaron hechas en los retos 4 y 5: POST con validación 400, mensajes de error específicos, botón Reintentar, `VITE_API_URL` y el origen de CORS en `application.properties`. Antes de publicar todavía falta:
+
+- **Persistencia real:** base de datos con JPA, y PUT/PATCH para que "Resolver" también se guarde en el servidor. Hoy los datos se pierden al reiniciar Spring Boot.
+- **Validación declarativa:** usar `@Valid` y Bean Validation con un `@ControllerAdvice` que devuelva siempre el mismo formato de error.
 - **Seguridad:** autenticación (Spring Security con JWT o sesiones), HTTPS y roles (usuario que reporta y técnico que resuelve).
-- **Calidad:** pruebas (Vitest y Testing Library en el frontend, JUnit y MockMvc en el backend), estilos y accesibilidad, y un build de producción con `npm run build`.
+- **Calidad:** pruebas automatizadas (Vitest y Testing Library en el frontend, JUnit y MockMvc en el backend), revisión de accesibilidad y build de producción con `npm run build`.
+- **Operación:** registro de errores (logs centralizados), paginación cuando haya muchas solicitudes y despliegue con variables de entorno por ambiente.
 
 ---
 
