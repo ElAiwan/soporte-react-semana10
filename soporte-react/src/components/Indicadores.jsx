@@ -9,17 +9,23 @@ export default function Indicadores({ solicitudes }) {
   ).length
   const porcentaje = total === 0 ? 0 : Math.round((resueltas / total) * 100)
 
+  const datos = [
+    ['Total registradas', total],
+    ['Pendientes', pendientes],
+    ['En proceso', enProceso],
+    ['Resueltas', resueltas],
+    ['Alta prioridad sin resolver', urgentes],
+    ['Porcentaje de resolución', `${porcentaje}%`]
+  ]
+
   return (
-    <section aria-label="Indicadores operativos">
-      <h2>Indicadores</h2>
-      <ul>
-        <li>Total registradas: {total}</li>
-        <li>Pendientes: {pendientes}</li>
-        <li>En proceso: {enProceso}</li>
-        <li>Resueltas: {resueltas}</li>
-        <li>Alta prioridad sin resolver: {urgentes}</li>
-        <li>Porcentaje de resolución: {porcentaje}%</li>
-      </ul>
+    <section aria-label="Indicadores operativos" className="indicadores">
+      {datos.map(([etiqueta, valor]) => (
+        <div key={etiqueta} className="indicador">
+          <span className="indicador-valor">{valor}</span>
+          <span className="indicador-etiqueta">{etiqueta}</span>
+        </div>
+      ))}
     </section>
   )
 }
