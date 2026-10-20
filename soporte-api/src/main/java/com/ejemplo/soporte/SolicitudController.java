@@ -7,7 +7,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/solicitudes")
-@CrossOrigin(origins = "http://localhost:5173")
 public class SolicitudController {
     private static final Set<String> PRIORIDADES = Set.of("Alta", "Media", "Baja");
 
@@ -37,11 +35,11 @@ public class SolicitudController {
         String titulo = datos.titulo() == null ? "" : datos.titulo().trim();
         if (titulo.isEmpty()) {
             return ResponseEntity.badRequest()
-                .body(Map.of("error", "La descripción es obligatoria."));
+                .body(Map.of("mensaje", "La descripción es obligatoria."));
         }
         if (!PRIORIDADES.contains(datos.prioridad())) {
             return ResponseEntity.badRequest()
-                .body(Map.of("error", "La prioridad debe ser Alta, Media o Baja."));
+                .body(Map.of("mensaje", "La prioridad debe ser Alta, Media o Baja."));
         }
         Solicitud nueva = new Solicitud(
             secuencia.incrementAndGet(), titulo, datos.prioridad(), "Pendiente");
