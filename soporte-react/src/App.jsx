@@ -8,7 +8,8 @@ function App() {
   const [error, setError] = useState('')
   const [titulo, setTitulo] = useState('')
   const [prioridad, setPrioridad] = useState('Media')
-  const [filtro, setFiltro] = useState('Todas')
+  const [filtroEstado, setFiltroEstado] = useState('Todas')
+  const [filtroPrioridad, setFiltroPrioridad] = useState('Todas')
   const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
@@ -59,7 +60,8 @@ function App() {
   }
 
   const visibles = solicitudes.filter(s =>
-    filtro === 'Todas' || s.estado === filtro
+    (filtroEstado === 'Todas' || s.estado === filtroEstado) &&
+    (filtroPrioridad === 'Todas' || s.prioridad === filtroPrioridad)
   )
   const pendientes = solicitudes.filter(s => s.estado === 'Pendiente').length
 
@@ -80,14 +82,23 @@ function App() {
         <button type="submit">Registrar</button>
       </form>
       <p role="status">{mensaje}</p>
-      <label htmlFor="filtro">Filtrar por estado</label>
-      <select id="filtro" value={filtro}
-        onChange={e => setFiltro(e.target.value)}>
+      <label htmlFor="filtroEstado">Filtrar por estado</label>
+      <select id="filtroEstado" value={filtroEstado}
+        onChange={e => setFiltroEstado(e.target.value)}>
         <option>Todas</option>
         <option>Pendiente</option>
         <option>En proceso</option>
         <option>Resuelta</option>
       </select>
+      <label htmlFor="filtroPrioridad">Filtrar por prioridad</label>
+      <select id="filtroPrioridad" value={filtroPrioridad}
+        onChange={e => setFiltroPrioridad(e.target.value)}>
+        <option>Todas</option>
+        <option>Alta</option>
+        <option>Media</option>
+        <option>Baja</option>
+      </select>
+      <p>Mostrando {visibles.length} de {solicitudes.length}</p>
       {cargando && <p role="status">Cargando solicitudes...</p>}
       {error && <p role="alert">{error}</p>}
       {!cargando && !error && (visibles.length === 0 ? <p>No hay resultados.</p> :
