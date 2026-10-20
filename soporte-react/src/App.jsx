@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from './services/api'
 import SolicitudCard from './components/SolicitudCard'
+import Indicadores from './components/Indicadores'
 
 function App() {
   const [solicitudes, setSolicitudes] = useState([])
@@ -63,13 +64,11 @@ function App() {
     (filtroEstado === 'Todas' || s.estado === filtroEstado) &&
     (filtroPrioridad === 'Todas' || s.prioridad === filtroPrioridad)
   )
-  const pendientes = solicitudes.filter(s => s.estado === 'Pendiente').length
 
   return (
     <main>
       <h1>Gestión de solicitudes</h1>
-      <p>Total registradas: {solicitudes.length}</p>
-      <p>Pendientes: {pendientes}</p>
+      <Indicadores solicitudes={solicitudes} />
       <form onSubmit={agregar}>
         <label htmlFor="titulo">Descripción</label>
         <input id="titulo" value={titulo}
