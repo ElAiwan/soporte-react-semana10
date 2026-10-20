@@ -14,6 +14,7 @@ function App() {
   const [filtroPrioridad, setFiltroPrioridad] = useState('Todas')
   const [busqueda, setBusqueda] = useState('')
   const [mensaje, setMensaje] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -39,21 +40,28 @@ function App() {
     return () => controller.abort()
   }, [])
 
-  function agregar(e) {
+  async function agregar(e) {
     e.preventDefault()
     if (!titulo.trim()) {
       setMensaje('Escribe una descripción de la solicitud.')
       return
     }
-    const nueva = {
-      id: crypto.randomUUID(),
-      titulo: titulo.trim(),
-      prioridad,
-      estado: 'Pendiente'
+    try {
+      setEnviando(true)
+      setMensaje('')
+      const respuesta = await api.post('/solicitudes', {
+        titulo: titulo.trim(),
+        prioridad
+      })
+      setSolicitudes(actuales => [...actuales, respuesta.data])
+      setTitulo('')
+      setMensaje('Solicitud registrada en el servidor.')
+    } catch (err) {
+      setMensaje(err.response?.data?.error ??
+        'No fue posible registrar la solicitud. Intenta de nuevo.')
+    } finally {
+      setEnviando(false)
     }
-    setSolicitudes(actuales => [...actuales, nueva])
-    setTitulo('')
-    setMensaje('Solicitud agregada correctamente.')
   }
 
   function resolver(id) {
@@ -81,7 +89,9 @@ function App() {
           onChange={e => setPrioridad(e.target.value)}>
           <option>Alta</option><option>Media</option><option>Baja</option>
         </select>
-        <button type="submit">Registrar</button>
+        <button type="submit" disabled={enviando}>
+          {enviando ? 'Registrando...' : 'Registrar'}
+        </button>
       </form>
       <p role="status">{mensaje}</p>
       <label htmlFor="busqueda">Buscar</label>
