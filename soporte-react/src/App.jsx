@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from './services/api'
 import SolicitudCard from './components/SolicitudCard'
 import Indicadores from './components/Indicadores'
+import { coincide } from './utils/texto'
 
 function App() {
   const [solicitudes, setSolicitudes] = useState([])
@@ -11,6 +12,7 @@ function App() {
   const [prioridad, setPrioridad] = useState('Media')
   const [filtroEstado, setFiltroEstado] = useState('Todas')
   const [filtroPrioridad, setFiltroPrioridad] = useState('Todas')
+  const [busqueda, setBusqueda] = useState('')
   const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
@@ -62,7 +64,8 @@ function App() {
 
   const visibles = solicitudes.filter(s =>
     (filtroEstado === 'Todas' || s.estado === filtroEstado) &&
-    (filtroPrioridad === 'Todas' || s.prioridad === filtroPrioridad)
+    (filtroPrioridad === 'Todas' || s.prioridad === filtroPrioridad) &&
+    coincide(s.titulo, busqueda)
   )
 
   return (
@@ -81,6 +84,10 @@ function App() {
         <button type="submit">Registrar</button>
       </form>
       <p role="status">{mensaje}</p>
+      <label htmlFor="busqueda">Buscar</label>
+      <input id="busqueda" type="search" value={busqueda}
+        placeholder="Ej.: impresora"
+        onChange={e => setBusqueda(e.target.value)} />
       <label htmlFor="filtroEstado">Filtrar por estado</label>
       <select id="filtroEstado" value={filtroEstado}
         onChange={e => setFiltroEstado(e.target.value)}>
